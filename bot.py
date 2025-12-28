@@ -21,19 +21,35 @@ app = Client(
 @app.on_message(filters.channel & filters.media)
 async def add_caption(client, message):
 
-    # DEBUG: confirm handler is triggered
-    print("Media detected")
+    if not (
+        message.document or message.video or message.audio
+        or message.voice or message.photo
+    ):
+        return
 
     old_caption = message.caption or ""
 
     if "Join free courses" in old_caption:
         return
 
-    new_caption = (
-        f"{old_caption}\n\n{CAPTION_TEXT}"
-        if old_caption else CAPTION_TEXT
-    )
+    # ---- indentation-safe logic ----
+    if old_caption:
+        new_caption = old_caption + "\n\n" + CAPTION_TEXT
+    else:
+        new_caption = CAPTION_TEXT
+    # --------------------------------
 
+    try:
+        await client.edit_message_caption(
+            chat_id=message.chat.id,
+            message_id=message.id,
+            caption=new_caption,
+            parse_mode="html"
+        )
+    except Exception as e:
+        print(e)
+
+app.run()
     try:
         await client.edit_message_caption(
             chat_id=message.chat.id,
