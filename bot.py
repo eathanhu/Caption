@@ -62,15 +62,15 @@ except Exception as e:
     print("Edit failed:", e)
 
 app.run()
-    if old_caption else CAPTION_TEXT
-    )
+if old_caption else CAPTION_TEXT
+)
 
-    try:
-        await message.edit_caption(
-            new_caption,
-            parse_mode="html"
-        )
-    except:
-        pass
+try:
+    await message.edit_caption(
+        new_caption,
+        parse_mode="html"
+    )
+except:
+    pass
 
 app.run()
