@@ -57,12 +57,12 @@ try:
         caption=new_caption,
         parse_mode="html"
     )
-        print("Caption edited")
-    except Exception as e:
-        print("Edit failed:", e)
+    print("Caption edited")
+except Exception as e:
+    print("Edit failed:", e)
 
 app.run()
-        if old_caption else CAPTION_TEXT
+    if old_caption else CAPTION_TEXT
     )
 
     try:
