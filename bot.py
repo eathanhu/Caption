@@ -63,7 +63,6 @@ except Exception as e:
 
 app.run()
 if old_caption else CAPTION_TEXT
-)
 
 try:
     await message.edit_caption(
