@@ -7,8 +7,8 @@ BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHANNEL_URL = os.environ["CHANNEL_URL"]
 
 CAPTION_TEXT = (
-    f'<a href="{CHANNEL_URL}">Join free blender courses</a>\n'
-    '👨‍💻Stay tuned for updates'
+    f'<a href="{CHANNEL_URL}">Join free courses</a>\n'
+    'Stay tuned for updates'
 )
 
 app = Client(
@@ -22,31 +22,30 @@ app = Client(
 async def add_caption(client, message):
 
     if not (
-        message.document or message.video or message.audio
-        or message.voice or message.photo
+        message.document
+        or message.video
+        or message.audio
+        or message.voice
+        or message.photo
     ):
         return
 
     old_caption = message.caption or ""
 
-    if "Join free blender courses" in old_caption:
+    if "Join free courses" in old_caption:
         return
 
-    new_caption = (
-        f"{old_caption}\n\n{CAPTION_TEXT}"
-        if old_caption else CAPTION_TEXT
-    )
+    if old_caption:
+        new_caption = f"{old_caption}\n\n{CAPTION_TEXT}"
+    else:
+        new_caption = CAPTION_TEXT
 
     try:
         await message.edit_caption(
             new_caption,
             parse_mode="html"
         )
-    except:
-        pass
-
-app.run()
- except:
-     pass
+    except Exception as e:
+        print(e)
 
 app.run()
