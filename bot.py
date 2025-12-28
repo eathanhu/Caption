@@ -3,6 +3,7 @@ import logging
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message
+from pyrogram.handlers import MessageHandler
 
 # Enable logging
 logging.basicConfig(
@@ -25,6 +26,18 @@ app = Client(
     api_hash=API_HASH,
     bot_token=BOT_TOKEN
 )
+
+@app.on_message(filters.private & filters.command("start"))
+async def start_command(client: Client, message: Message):
+    """Handle /start command in private chat"""
+    try:
+        await message.reply_text(
+            "Hello! I'm Caption Bot officially reserved for @free_blender_courses\n\n"
+            "The trick and repo is paid, please contact in discussion group for further purchases."
+        )
+        logger.info(f"📩 /start command received from user {message.from_user.id}")
+    except Exception as e:
+        logger.error(f"❌ Error handling /start command: {e}")
 
 @app.on_message(filters.channel & (filters.document | filters.video | filters.audio | filters.photo))
 async def handle_media(client: Client, message: Message):
