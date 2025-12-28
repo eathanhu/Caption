@@ -46,7 +46,7 @@ async def add_caption(client, message):
         pass
 
 app.run()
-    except:
-        pass
+ except:
+     pass
 
 app.run()
