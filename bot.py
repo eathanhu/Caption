@@ -18,7 +18,7 @@ app = Client(
     bot_token=BOT_TOKEN
 )
 
-@app.on_message(filters.channel & ~filters.text)
+@app.on_message(filters.channel & ~filters.media)
 async def add_caption(client, message):
 
     if not (
