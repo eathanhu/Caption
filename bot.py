@@ -38,7 +38,7 @@ async def add_caption(client, message):
         pass
 
 app.run()
-        new_caption = old_caption + "\n\n" + CAPTION_TEXT
+    new_caption = old_caption + "\n\n" + CAPTION_TEXT
     else:
         new_caption = CAPTION_TEXT
     # --------------------------------
