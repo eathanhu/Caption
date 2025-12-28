@@ -1,16 +1,23 @@
 import os
+import logging
 from pyrogram import Client, filters
+from pyrogram.types import Message
 
-API_ID = int(os.environ["API_ID"])
-API_HASH = os.environ["API_HASH"]
-BOT_TOKEN = os.environ["BOT_TOKEN"]
-CHANNEL_URL = os.environ["CHANNEL_URL"]
-
-CAPTION_TEXT = (
-    f'<a href="{CHANNEL_URL}">Join free courses</a>\n'
-    'Stay tuned for updates'
+# Enable logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
 )
+logger = logging.getLogger(__name__)
 
+# Configuration - Get from environment variables
+API_ID = os.environ.get('API_ID')
+API_HASH = os.environ.get('API_HASH')
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
+CHANNEL_USERNAME = '@free_blender_courses'
+CHANNEL_ID = os.environ.get('CHANNEL_ID')  # Your channel ID (e.g., -1001234567890)
+
+# Create the bot client
 app = Client(
     "caption_bot",
     api_id=API_ID,
@@ -18,35 +25,39 @@ app = Client(
     bot_token=BOT_TOKEN
 )
 
-@app.on_message(filters.channel & filters.media)
-async def add_caption(client, message):
-
-    if not (
-        message.document or message.video or message.audio
-        or message.voice or message.photo
-    ):
-        return
-
-    old_caption = message.caption or ""
-
-    if "Join free courses" in old_caption:
-        return
-
-    # ---- indentation-safe logic ----
-    if old_caption:
-        new_caption = old_caption + "\n\n" + CAPTION_TEXT
-    else:
-        new_caption = CAPTION_TEXT
-    # --------------------------------
-
+@app.on_message(filters.channel & (filters.document | filters.video | filters.audio | filters.photo))
+async def handle_media(client: Client, message: Message):
+    """Handle media files posted in the channel"""
     try:
-        await client.edit_message_caption(
-            chat_id=message.chat.id,
-            message_id=message.id,
-            caption=new_caption,
-            parse_mode="html"
-        )
+        # Check if this is your channel (if CHANNEL_ID is set)
+        if CHANNEL_ID and str(message.chat.id) != CHANNEL_ID:
+            return
+        
+        # Get the original caption
+        original_caption = message.caption or ""
+        
+        # Create new caption with channel promotion
+        if original_caption:
+            new_caption = f"{original_caption}\n\n"
+        else:
+            new_caption = ""
+        
+        new_caption += f"📢 [Join Free Blender Courses](https://t.me/free_blender_courses)\n"
+        new_caption += f"🔔 [Stay tuned for updates!](https://t.me/free_blender_courses)"
+        
+        # Edit the message caption
+        await message.edit_caption(new_caption)
+        
+        logger.info(f"✅ Caption updated for message {message.id} in {message.chat.title}")
+        
     except Exception as e:
-        print(e)
+        logger.error(f"❌ Error updating caption: {e}")
 
-app.run()
+# Start the bot
+if __name__ == "__main__":
+    if not all([API_ID, API_HASH, BOT_TOKEN]):
+        logger.error("❌ Missing required environment variables: API_ID, API_HASH, or BOT_TOKEN")
+    else:
+        logger.info("🚀 Bot starting...")
+        app.run()
+        logger.info("✅ Bot is running!")
