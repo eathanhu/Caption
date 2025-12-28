@@ -1,10 +1,15 @@
+import os
 from pyrogram import Client, filters
 
-API_ID = 123456        # your api_id
-API_HASH = "API_HASH"  # your api_hash
-BOT_TOKEN = "BOT_TOKEN"
+API_ID = int(os.environ["API_ID"])
+API_HASH = os.environ["API_HASH"]
+BOT_TOKEN = os.environ["BOT_TOKEN"]
+CHANNEL_URL = os.environ["CHANNEL_URL"]
 
-CHANNEL_TAG = "@free_blender_couses"
+CAPTION_TEXT = (
+    f'<a href="{CHANNEL_URL}">Join free courses</a>\n'
+    'Stay tuned for updates'
+)
 
 app = Client(
     "caption_bot",
@@ -13,29 +18,35 @@ app = Client(
     bot_token=BOT_TOKEN
 )
 
-@app.on_message(filters.channel & ~filters.text)
+@app.on_message(filters.channel & filters.media)
 async def add_caption(client, message):
-    # Skip messages that cannot have captions
-    if not message.caption and not (
-        message.document or message.video or message.audio or
-        message.voice or message.photo
+
+    if not (
+        message.document or message.video or message.audio
+        or message.voice or message.photo
     ):
         return
 
     old_caption = message.caption or ""
 
-    if CHANNEL_TAG in old_caption:
-        return  # already exists
+    if "Join free courses" in old_caption:
+        return
 
-    new_caption = (
-        f"{old_caption}\n\n{CHANNEL_TAG}"
-        if old_caption
-        else CHANNEL_TAG
-    )
+    # ---- indentation-safe logic ----
+    if old_caption:
+        new_caption = old_caption + "\n\n" + CAPTION_TEXT
+    else:
+        new_caption = CAPTION_TEXT
+    # --------------------------------
 
     try:
-        await message.edit_caption(new_caption)
-    except:
-        pass
+        await client.edit_message_caption(
+            chat_id=message.chat.id,
+            message_id=message.id,
+            caption=new_caption,
+            parse_mode="html"
+        )
+    except Exception as e:
+        print(e)
 
 app.run()
