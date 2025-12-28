@@ -18,14 +18,11 @@ app = Client(
     bot_token=BOT_TOKEN
 )
 
-@app.on_message(filters.channel & ~filters.media)
+@app.on_message(filters.channel & filters.media)
 async def add_caption(client, message):
 
-    if not (
-        message.document or message.video or message.audio
-        or message.voice or message.photo
-    ):
-        return
+    # DEBUG: confirm handler is triggered
+    print("Media detected")
 
     old_caption = message.caption or ""
 
@@ -34,6 +31,21 @@ async def add_caption(client, message):
 
     new_caption = (
         f"{old_caption}\n\n{CAPTION_TEXT}"
+        if old_caption else CAPTION_TEXT
+    )
+
+    try:
+        await client.edit_message_caption(
+            chat_id=message.chat.id,
+            message_id=message.id,
+            caption=new_caption,
+            parse_mode="html"
+        )
+        print("Caption edited")
+    except Exception as e:
+        print("Edit failed:", e)
+
+app.run()
         if old_caption else CAPTION_TEXT
     )
 
