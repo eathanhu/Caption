@@ -44,7 +44,7 @@ async def handle_media(client: Client, message: Message):
     """Handle media files posted in the channel"""
     try:
         # Add 30 second delay before editing caption
-        logger.info(f"⏳ Waiting 30 seconds before editing caption for message {message.id}...")
+        logger.info(f"⏳ Waiting 60 seconds before editing caption for message {message.id}...")
         await asyncio.sleep(60)
         
         # Check if this is your channel (if CHANNEL_ID is set)
