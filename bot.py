@@ -50,13 +50,13 @@ async def add_caption(client, message):
         print(e)
 
 app.run()
-    try:
-        await client.edit_message_caption(
-            chat_id=message.chat.id,
-            message_id=message.id,
-            caption=new_caption,
-            parse_mode="html"
-        )
+try:
+    await client.edit_message_caption(
+        chat_id=message.chat.id,
+        message_id=message.id,
+        caption=new_caption,
+        parse_mode="html"
+    )
         print("Caption edited")
     except Exception as e:
         print("Edit failed:", e)
