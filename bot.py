@@ -58,7 +58,7 @@ async def start_command(client: Client, message: Message):
         logger.error(f"❌ Error handling /start command: {e}")
 
 @app.on_message(filters.channel & (filters.document))
-async def handle_media(client: Client, message: Message):
+async def handle_media(update:Update,client: Client, message: Message):
     """Handle media files posted in the channel"""
     message = update.message
     try:
