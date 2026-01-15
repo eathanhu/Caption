@@ -4,6 +4,7 @@ import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from pyrogram.handlers import MessageHandler
+from telegram import Update
 
 import os
 import threading
