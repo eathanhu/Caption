@@ -60,6 +60,7 @@ async def start_command(client: Client, message: Message):
 @app.on_message(filters.channel & (filters.document))
 async def handle_media(client: Client, message: Message):
     """Handle media files posted in the channel"""
+    message = update.message
     try:
         # Add 30 second delay before editing caption
         logger.info(f"⏳ Waiting 2 minutes and 30 seconds before editing caption for message {message.id}...")
@@ -74,9 +75,9 @@ async def handle_media(client: Client, message: Message):
         
         # Create new caption with channel promotion
         if original_caption:
-            new_caption = f"{original_caption}\n\n"
+            new_caption = f"{message.document.file_name}\n{original_caption}\n\n"
         else:
-            new_caption = ""
+            new_caption = message.document.file_name
         
         new_caption += f"📢 [Join Free Blender Courses](https://t.me/free_blender_courses)\n"
         new_caption += f"🔔 [Stay tuned for updates!](https://t.me/free_blender_courses)"
